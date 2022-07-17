@@ -31,15 +31,22 @@ Adafruit_MLX90614 mlx = Adafruit_MLX90614();
   char auth[] = "rF0gN-Zo20v2XaCYwyDCLaqGx6aMTDcx";
   char ssid[] = "";  //Your SSID
   char pass[] = ""; // your Wifi password
+  int slidervalue;
 
-  BlynkTimer timer;
-  int datat;
+ BLYNK_WRITE(V1)
+{
+ double i = param.asDouble();
+ int buttonstate = 0;
+ 
+buttonstate = BLYNK_WRITE(V2);
 
-  /*void myTimerEvent()
-  {
-  //datat = mlx.readObjectTempC();
-  Blynk.virtualWrite(V0, datat);
-  }*/
+ if (buttonstate == 1) {
+    Blynk.virtualWrite(V3, i);
+  }
+
+ Serial.println(i);
+  
+} 
 
 void setup() {
   Serial.begin(115200);
@@ -47,7 +54,7 @@ void setup() {
    /*WiFi.mode(WIFI_STA); // explicitly set mode, esp defaults to STA+AP
     // it is a good practice to make sure your code sets wifi mode how you want it.
 
-    Serial.begin(9600);
+    Serial.begin(115200);
     
     //WiFiManager, Local intialization
     WiFiManager wm;
@@ -89,13 +96,14 @@ void setup() {
 
 void loop() {
   Blynk.run();
-  timer.run();
   
   Serial.print("Ambient = "); Serial.print(mlx.readAmbientTempC());
   Serial.print("*C\tObject = "); Serial.print(mlx.readObjectTempC()); Serial.println("*C");
   Serial.print("Ambient = "); Serial.print(mlx.readAmbientTempF());
   Serial.print("*F\tObject = "); Serial.print(mlx.readObjectTempF()); Serial.println("*F");
-  
+//  Serial.println(i+"");
+
+  //Blynk
   Blynk.virtualWrite(V0, mlx.readObjectTempC()); // gibt an V0 die aktuelle Temperatur weiter
   
    // wenn 5 mal kein wert dann sagen, dass tasse genommen wurde
