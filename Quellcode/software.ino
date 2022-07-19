@@ -28,55 +28,105 @@
 
 Adafruit_MLX90614 mlx = Adafruit_MLX90614();
 
-  char auth[] = "rF0gN-Zo20v2XaCYwyDCLaqGx6aMTDcx";
-  char ssid[] = "";  //Your SSID
-  char pass[] = ""; // your Wifi password
-  int slidervalue;
+char auth[] = "rF0gN-Zo20v2XaCYwyDCLaqGx6aMTDcx";
+char ssid[] = "";  //Your SSID
+char pass[] = ""; // your Wifi password
+int slidervalue = 0;
+int teaProfile = 0;
+int coffeeProfile = 0;
+int otherDrinkProfile = 0;
+int chooseProfilePressed = 0;
+int saveProfilePressed = 0;
+int profile = 0; //1, 2 or 3
+int activeProfile = 0;
 
- BLYNK_WRITE(V1)
+BLYNK_WRITE(V1)
 {
- double i = param.asDouble();
- int buttonstate = 0;
- 
-buttonstate = BLYNK_WRITE(V2);
+  double i = param.asDouble();
+  slidervalue = i;
+  profile = slidervalue;
+  Blynk.virtualWrite(V3, profile);
 
- if (buttonstate == 1) {
-    Blynk.virtualWrite(V3, i);
+  Serial.println(i);
+
+}
+
+//Saving profile (not functional)
+BLYNK_WRITE(V5)
+{
+  int i = param.asInt();
+  chooseProfilePressed = i;
+  if ((chooseProfilePressed == 1) && (teaProfile == profile)) { //if press the choose button, value of teaprofile is displayed
+          //profile = teaProfile;
+          Blynk.virtualWrite(V3, teaProfile);
+        }
+}
+
+BLYNK_WRITE(V6)
+{
+  int i = param.asInt();
+  saveProfilePressed = i;
+  if ((saveProfilePressed == 1) && (profile == 1)) { //if you press the save button, value of slider is saved to chosen profile
+    teaProfile = slidervalue;
   }
+  if ((saveProfilePressed == 1) && (profile == 2)) { //if you press the save button, value of slider is saved to chosen profile
+    coffeeProfile = slidervalue;
+  }
+  if ((saveProfilePressed == 1) && (profile == 3)) { //if you press the save button, value of slider is saved to chosen profile
+    otherDrinkProfile = slidervalue;
+  }
+}
 
- Serial.println(i);
-  
-} 
+BLYNK_WRITE (V4) {
+  profile = param.asInt();
+  switch (param.asInt()) {
+    case 1: {
+        break;
+      }
+    case 2: {
+        coffeeProfile = slidervalue;
+        break;
+      }
+
+    case 3: {
+        otherDrinkProfile = slidervalue;
+        break;
+      }
+
+  }
+}
+
+//---------------------------
 
 void setup() {
   Serial.begin(115200);
   //WifiManager setup
-   /*WiFi.mode(WIFI_STA); // explicitly set mode, esp defaults to STA+AP
-    // it is a good practice to make sure your code sets wifi mode how you want it.
+  WiFi.mode(WIFI_STA); // explicitly set mode, esp defaults to STA+AP
+  // it is a good practice to make sure your code sets wifi mode how you want it.
 
-    Serial.begin(115200);
-    
-    //WiFiManager, Local intialization
-    WiFiManager wm;
+  Serial.begin(115200);
 
-    // reset settings - wipe stored credentials for testing
-    // these are stored by the esp library
-    //wm.resetSettings();
+  //WiFiManager, Local intialization
+  WiFiManager wm;
 
-    bool res;
-     res = wm.autoConnect(); // auto generated AP name from chipid
-    // res = wm.autoConnect("AutoConnectAP"); // anonymous ap
+  // reset settings - wipe stored credentials for testing
+  // these are stored by the esp library
+  //wm.resetSettings();
 
-    if(!res) {
-        Serial.println("Failed to connect");
-        // ESP.restart();
-    } 
-    else {
-        //if you get here you have connected to the WiFi    
-        Serial.println("connected...yeey :)");
-    }
-    
-  // Your WiFi credentials.*/
+  bool res;
+  res = wm.autoConnect(); // auto generated AP name from chipid
+  // res = wm.autoConnect("AutoConnectAP"); // anonymous ap
+
+  if (!res) {
+    Serial.println("Failed to connect");
+    // ESP.restart();
+  }
+  else {
+    //if you get here you have connected to the WiFi
+    Serial.println("connected...yeey :)");
+  }
+
+  // Your WiFi credentials.
 
   Blynk.begin(auth, ssid, pass, "iot.informatik.uni-oldenburg.de", 8080);
 
@@ -92,23 +142,38 @@ void setup() {
 
   Serial.print("Emissivity = "); Serial.println(mlx.readEmissivity());
   Serial.println("================================================");
+
 }
 
 void loop() {
   Blynk.run();
-  
+
   Serial.print("Ambient = "); Serial.print(mlx.readAmbientTempC());
   Serial.print("*C\tObject = "); Serial.print(mlx.readObjectTempC()); Serial.println("*C");
   Serial.print("Ambient = "); Serial.print(mlx.readAmbientTempF());
   Serial.print("*F\tObject = "); Serial.print(mlx.readObjectTempF()); Serial.println("*F");
-//  Serial.println(i+"");
+
+  //to monitor variables
+  Serial.print("slidervalue ="); Serial.print(slidervalue);
+  Serial.print("teaProfile ="); Serial.print(teaProfile);
+  Serial.print("coffeeProfile ="); Serial.print(coffeeProfile);
+  Serial.print("chooseProfilePressed ="); Serial.print(chooseProfilePressed);
+  Serial.print("saveProfilePressed ="); Serial.print(saveProfilePressed);
+  Serial.print("profile ="); Serial.print(profile);
+  Serial.println();
+  Serial.print("chosenProfile for switch = "); Serial.print(profile);
+
 
   //Blynk
-  Blynk.virtualWrite(V0, mlx.readObjectTempC()); // gibt an V0 (Anzeige bei Blynk) die aktuelle Temperatur weiter
-  
-   // Wenn fünfmal kein Wert gemessen wurde, dann sagen, dass Tasse genommen wurde
-   
+  Blynk.virtualWrite(V0, mlx.readObjectTempC()); //displays current temperature on V0 (Blynk)
+
+  if (mlx.readObjectTempC() < slidervalue) // Notificate if current temperature is below set temperature
+  {
+    Blynk.notify("Achtung! Deine Wunschtemperatur wurde jetzt erreicht!");
+  }
+
+
   Serial.println();
   delay(2000);
-  
+
 }
