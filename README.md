@@ -8,7 +8,7 @@ Sobald eine Tasse auf dem Untersetzer gestellt wird, wird auch der Switch runter
 
 Voraussetzung:
 - Micro-USB Kabel
-- Gerät mit dem Programm Arduino
+- Gerät mit dem Programm Arduin
 
 Nutzung:
 1. den Controller über ein Micro-USB Kabel mit einem Gerät, welches Arduino installiert hat, verbinden
