@@ -10,6 +10,4 @@ Voraussetzung:
 - Micro-USB Kabel
 - Gerät mit dem Programm Arduino
 
-Nutzung:
-1. den Controller über ein Micro-USB Kabel mit einem Gerät, welches Arduino installiert hat, verbinden
-2. in Arduino die Bibliothek "Adafruit MLX90614 Library" von Adafruit installieren
+Bedienungsanleitung: https://wp.uni-oldenburg.de/soft-skills-und-technische-kompetenz-wise20212022-projektgruppe-11/2022/07/19/nutzerhandbuch/
