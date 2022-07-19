@@ -30,7 +30,7 @@ Adafruit_MLX90614 mlx = Adafruit_MLX90614();
 
 char auth[] = "rF0gN-Zo20v2XaCYwyDCLaqGx6aMTDcx";
 char ssid[] = "";  //Your SSID
-char pass[] = ""; // your Wifi password
+char pass[] = ""; // your WiFi password
 int slidervalue = 0;
 int teaProfile = 0;
 int coffeeProfile = 0;
@@ -51,7 +51,7 @@ BLYNK_WRITE(V1)
 
 }
 
-//Saving profile (not functional)
+//saving profile (not functional)
 BLYNK_WRITE(V5)
 {
   int i = param.asInt();
