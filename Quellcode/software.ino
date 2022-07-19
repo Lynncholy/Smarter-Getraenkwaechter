@@ -104,9 +104,9 @@ void loop() {
 //  Serial.println(i+"");
 
   //Blynk
-  Blynk.virtualWrite(V0, mlx.readObjectTempC()); // gibt an V0 die aktuelle Temperatur weiter
+  Blynk.virtualWrite(V0, mlx.readObjectTempC()); // gibt an V0 (Anzeige bei Blynk) die aktuelle Temperatur weiter
   
-   // wenn 5 mal kein Wert dann sagen, dass tasse genommen wurde
+   // Wenn fünfmal kein Wert gemessen wurde, dann sagen, dass Tasse genommen wurde
    
   Serial.println();
   delay(2000);
